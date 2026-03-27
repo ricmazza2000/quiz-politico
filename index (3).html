@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Quiz Politico Italiano 2026 — Scopri a quale partito sei più affine!">
+<title>🗳️ Quiz Politico Italiano 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #0D0D1A;
+    --bg2:     #141428;
+    --bg3:     #1E1E3A;
+    --accent:  #FFD600;
+    --accent2: #FF4D6D;
+    --accent3: #00E5FF;
+    --accent4: #69FF47;
+    --text:    #FFFFFF;
+    --dim:     #7777AA;
+    --border:  #2A2A50;
+    --radius:  10px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ── SCHERMATA ── */
+  .screen { display: none; flex-direction: column; min-height: 100vh; }
+  .screen.active { display: flex; }
+
+  /* ── HEADER ── */
+  .hdr {
+    background: var(--bg2);
+    border-bottom: 2px solid var(--accent);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .hdr-title { font-family: 'Syne', sans-serif; font-size: 1rem; color: var(--accent); }
+  .hdr-right { margin-left: auto; font-size: .8rem; color: var(--accent3); font-weight: 700; }
+
+  /* ── AVATAR PICCOLO IN HEADER ── */
+  .mini-av {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+    border: 2px solid var(--accent);
+  }
+
+  /* ── PROGRESS BAR ── */
+  .pbar-wrap { height: 6px; background: var(--border); width: 100%; }
+  .pbar-fill { height: 100%; background: var(--accent); transition: width .4s ease; }
+
+  /* ── BODY CONTENT ── */
+  .content { flex: 1; padding: 20px 16px 100px; max-width: 760px; margin: 0 auto; width: 100%; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 14px;
+  }
+  .card-accent { border-color: var(--accent); }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: .9rem; font-weight: 700;
+    border: none; border-radius: var(--radius);
+    cursor: pointer; transition: all .15s;
+    text-decoration: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-primary { background: var(--accent); color: #0D0D1A; }
+  .btn-primary:hover, .btn-primary:active { background: #FFE840; transform: translateY(-1px); }
+  .btn-secondary { background: var(--bg3); color: var(--accent); border: 1px solid var(--border); }
+  .btn-secondary:hover, .btn-secondary:active { background: var(--bg2); }
+  .btn-danger { background: var(--accent2); color: #fff; }
+  .btn-danger:hover { background: #cc0033; }
+  .btn-full { width: 100%; justify-content: center; padding: 16px; font-size: 1rem; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+  /* ── FOOTER NAVIGAZIONE FISSO ── */
+  .nav-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--bg2);
+    border-top: 2px solid var(--border);
+    padding: 12px 20px;
+    display: flex; gap: 10px; justify-content: space-between;
+    z-index: 10;
+    max-width: 760px; margin: 0 auto;
+  }
+  .nav-bar .btn { flex: 1; justify-content: center; }
+
+  /* ══════════════════════════════════════════
+     SCHERMATA 1 — INTRO
+  ══════════════════════════════════════════ */
+  #s-intro { justify-content: center; align-items: center; text-align: center; padding: 30px 20px; }
+
+  .logo-wrap { position: relative; width: 130px; height: 130px; margin: 0 auto 16px; }
+  .logo-ring {
+    position: absolute; inset: 0; border-radius: 50%;
+    border: 3px solid var(--accent);
+    animation: spin 6s linear infinite;
+  }
+  .logo-ring::before {
+    content: '';
+    position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+  }
+  .logo-inner {
+    position: absolute; inset: 16px;
+    background: var(--bg2);
+    border-radius: 50%;
+    border: 2px solid var(--accent3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.8rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .main-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    color: var(--accent);
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+  .main-sub { color: var(--accent2); font-size: clamp(1.2rem, 4vw, 1.8rem); }
+  .tagline { color: var(--accent3); font-size: .8rem; margin: 10px 0 20px; }
+
+  .info-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin: 20px 0;
+    text-align: left;
+  }
+  .info-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    font-size: .8rem; color: var(--dim);
+  }
+  .info-item strong { color: var(--accent); display: block; font-size: 1.1rem; margin-bottom: 2px; }
+
+  .warning { font-size: .72rem; color: var(--dim); margin-top: 16px; }
+
+  /* ══════════════════════════════════════════
+     SCHERMATA 2 — PROFILO
+  ══════════════════════════════════════════ */
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: .85rem; color: var(--accent);
+    text-transform: uppercase; letter-spacing: .08em;
+    margin-bottom: 10px;
+  }
+
+  .name-input-wrap {
+    border: 2px solid var(--accent);
+    border-radius: var(--radius);
+    background: var(--bg);
+    padding: 4px 14px;
+    margin-bottom: 20px;
+  }
+  .name-input-wrap input {
+    width: 100%; padding: 12px 0;
+    background: transparent; border: none; outline: none;
+    font-family: 'Space Mono', monospace;
+    font-size: 1.1rem; font-weight: 700;
+    color: var(--accent); caret-color: var(--accent);
+  }
+  .name-input-wrap input::placeholder { color: var(--dim); font-weight: 400; }
+
+  .avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  @media(max-width: 400px) { .avatar-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .av-cell {
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .av-circle {
+    width: 68px; height: 68px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem;
+    border: 3px solid var(--border);
+    transition: border-color .15s, box-shadow .15s, transform .15s;
+    user-select: none;
+  }
+  .av-cell.selected .av-circle {
+    border-color: var(--accent);
+    box-shadow: 0 0 18px var(--accent);
+    transform: scale(1.08);
+  }
+  .av-name { font-size: .65rem; color: var(--dim); text-align: center; line-height: 1.2; }
+  .av-cell.selected .av-name { color: var(--accent); }
+
+  /* ══════════════════════════════════════════
+     SCHERMATA 3 — QUIZ
+  ══════════════════════════════════════════ */
+  .q-text {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1rem, 3.5vw, 1.25rem);
+    color: var(--accent);
+    line-height: 1.4;
+    margin-bottom: 18px;
+  }
+
+  .opt {
+    display: flex; align-items: flex-start; gap: 0;
+    background: var(--bg2);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .opt:hover { border-color: var(--accent2); }
+  .opt.selected { border-color: var(--accent); background: #1A1800; }
+  .opt-letter {
+    min-width: 44px; width: 44px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-size: 1rem;
+    color: var(--dim); background: var(--border);
+    align-self: stretch;
+    transition: background .15s, color .15s;
+  }
+  .opt.selected .opt-letter { background: var(--accent); color: #0D0D1A; }
+  .opt-text { padding: 14px 14px; font-size: .88rem; line-height: 1.5; flex: 1; }
+
+  .comment-box {
+    background: var(--bg);
+    border: 1px solid var(--accent3);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-size: .78rem;
+    color: var(--accent3);
+    font-style: italic;
+    margin-bottom: 14px;
+    animation: fadeIn .4s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* ══════════════════════════════════════════
+     SCHERMATA 4 — RISULTATO
+  ══════════════════════════════════════════ */
+
+  /* confetti canvas */
+  #confetti-canvas {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 999;
+  }
+
+  .winner-card {
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 16px;
+    border: 3px solid var(--accent);
+    animation: popIn .5s cubic-bezier(.175,.885,.32,1.275);
+  }
+  @keyframes popIn { from { transform: scale(.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .winner-top {
+    padding: 20px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .winner-av {
+    width: 80px; height: 80px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.4rem;
+    border: 3px solid rgba(255,255,255,.4);
+  }
+  .winner-info {}
+  .winner-hello { font-size: .85rem; opacity: .8; }
+  .winner-sigla { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; line-height: 1; }
+  .winner-nome { font-size: 1rem; font-weight: 700; margin: 2px 0; }
+  .winner-area { font-size: .75rem; opacity: .75; font-style: italic; }
+
+  .winner-sep { height: 1px; background: rgba(255,255,255,.2); margin: 0 16px; }
+
+  .winner-desc { padding: 12px 20px; font-size: .88rem; opacity: .9; line-height: 1.6; }
+  .winner-fun {
+    padding: 10px 20px 16px;
+    font-size: .82rem; font-style: italic; opacity: .8;
+  }
+  .winner-fun::before { content: '😄  '; }
+
+  /* podio */
+  .podio {
+    display: flex; align-items: flex-end; gap: 8px;
+    margin-bottom: 16px; height: 160px;
+  }
+  .podio-col { flex: 1; display: flex; flex-direction: column; align-items: center; }
+  .podio-block {
+    width: 100%; border-radius: 6px 6px 0 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 4px; font-size: 1.4rem;
+    border: 2px solid transparent;
+    transition: transform .2s;
+  }
+  .podio-block:hover { transform: translateY(-3px); }
+  .podio-sigla { font-family: 'Syne', sans-serif; font-size: .75rem; font-weight: 800; margin-top: 4px; color: var(--accent); }
+  .podio-pct { font-size: .7rem; color: var(--dim); }
+
+  /* barre classifica */
+  .bar-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 8px;
+  }
+  .bar-name { font-size: .72rem; color: var(--dim); width: 160px; text-align: right; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @media(max-width: 480px) { .bar-name { width: 100px; font-size: .65rem; } }
+  .bar-name.winner-bar { color: var(--accent); font-weight: 700; }
+  .bar-track { flex: 1; height: 26px; background: var(--bg3); border-radius: 6px; overflow: hidden; position: relative; }
+  .bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; font-size: .75rem; transition: width 1s cubic-bezier(.25,.46,.45,.94); }
+  .bar-emoji { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: .85rem; }
+  .bar-pct { width: 36px; text-align: right; font-size: .72rem; color: var(--dim); flex-shrink: 0; }
+  .bar-pct.winner-pct { color: var(--accent); font-weight: 700; }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem; color: var(--accent);
+    margin: 20px 0 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .disclaimer {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: .72rem; color: var(--dim);
+    text-align: center; line-height: 1.6;
+    margin-top: 16px;
+  }
+
+  .result-btns {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 14px; padding-bottom: 20px;
+  }
+  .result-btns .btn { flex: 1; min-width: 140px; justify-content: center; }
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ══════════════════════════════════════
+     SCHERMATA 1 — INTRO
+══════════════════════════════════════ -->
+<section id="s-intro" class="screen active">
+  <div class="logo-wrap">
+    <div class="logo-ring"></div>
+    <div class="logo-inner">🗳️</div>
+  </div>
+
+  <h1 class="main-title">Quiz Politico</h1>
+  <h2 class="main-title main-sub">Italiano 2026</h2>
+  <p class="tagline">▸ Scopri a quale partito sei davvero affine ◂</p>
+
+  <div class="info-grid">
+    <div class="info-item"><strong>15</strong>domande irriverenti</div>
+    <div class="info-item"><strong>14</strong>partiti italiani</div>
+    <div class="info-item"><strong>100%</strong>gratuito & anonimo</div>
+    <div class="info-item"><strong>😄</strong>commenti inclusi</div>
+  </div>
+
+  <button class="btn btn-primary btn-full" onclick="goTo('s-profile')">
+    ▶&nbsp; CREA IL TUO PERSONAGGIO
+  </button>
+
+  <p class="warning">⚠ Solo intrattenimento. Non è un sondaggio elettorale.</p>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     SCHERMATA 2 — PROFILO
+══════════════════════════════════════ -->
+<section id="s-profile" class="screen">
+  <div class="hdr">
+    <div class="hdr-title">👤 CREA IL TUO PERSONAGGIO</div>
+  </div>
+
+  <div class="content">
+    <p class="section-label">✏️ Il tuo nome</p>
+    <div class="name-input-wrap">
+      <input id="name-input" type="text" placeholder="Scrivi il tuo nome…" maxlength="24" autocomplete="off">
+    </div>
+
+    <p class="section-label">🎭 Scegli il tuo avatar</p>
+    <div class="avatar-grid" id="avatar-grid"></div>
+  </div>
+
+  <div class="nav-bar">
+    <button class="btn btn-secondary" onclick="goTo('s-intro')">◀ TORNA</button>
+    <button class="btn btn-primary" onclick="startQuiz()">INIZIA IL QUIZ ▶</button>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     SCHERMATA 3 — QUIZ
+══════════════════════════════════════ -->
+<section id="s-quiz" class="screen">
+  <div class="hdr">
+    <div class="mini-av" id="quiz-av"></div>
+    <span id="quiz-uname" style="font-size:.85rem;color:var(--accent);font-weight:700"></span>
+    <div class="hdr-right" id="quiz-counter"></div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbar"></div></div>
+
+  <div class="content" id="quiz-body"></div>
+
+  <div class="nav-bar">
+    <button class="btn btn-secondary" id="btn-back" onclick="prevQ()" style="display:none">◀ INDIETRO</button>
+    <button class="btn btn-primary" id="btn-next" onclick="nextQ()" disabled>AVANTI ▶</button>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     SCHERMATA 4 — RISULTATO
+══════════════════════════════════════ -->
+<section id="s-result" class="screen">
+  <div class="hdr">
+    <div class="hdr-title">🏆 I TUOI RISULTATI</div>
+  </div>
+  <div class="content" id="result-body"></div>
+</section>
+
+
+<script>
+// ══════════════════════════════════════════════════════
+//  DATI
+// ══════════════════════════════════════════════════════
+
+const AVATARS = [
+  {e:"🦅",n:"L'Aquilotto",  bg:"#1A3A6C"},
+  {e:"🌹",n:"Il Rosario",   bg:"#8B0020"},
+  {e:"🌿",n:"Il Verdino",   bg:"#0A5C30"},
+  {e:"🔨",n:"Il Martellone",bg:"#5C2000"},
+  {e:"📚",n:"Il Professorone",bg:"#2A1A5C"},
+  {e:"🇪🇺",n:"L'Europeino", bg:"#003380"},
+  {e:"⚙️",n:"Il Meccanismo",bg:"#2A2A2A"},
+  {e:"☀️",n:"Il Solario",   bg:"#8B6000"},
+  {e:"❤️",n:"Il Cuoricino", bg:"#8B003A"},
+  {e:"🐺",n:"Il Lupacchiotto",bg:"#1A1A1A"},
+  {e:"🕊️",n:"La Colombina", bg:"#004466"},
+  {e:"🌈",n:"L'Arcobaleno", bg:"#3A0066"},
+];
+
+const PARTITI = {
+  FdI: {nome:"Fratelli d'Italia",   sigla:"FdI",  e:"🦅", col:"#1A3A6C", txt:"#fff",
+        area:"Destra nazionale",
+        desc:"Sovranismo, identità, famiglia tradizionale, atlantismo, controllo immigrazione.",
+        fun:"Il tuo motto: 'L'Italia agli italiani (e agli italiani all'estero).'"},
+  Lega:{nome:"Lega - Salvini Premier", sigla:"LEGA",e:"🟢",col:"#007A35",txt:"#fff",
+        area:"Centrodestra / Autonomismo",
+        desc:"Autonomia regionale, flat tax, controllo migratorio, sicurezza, federalismo.",
+        fun:"Il tuo motto: 'Prima il Nord. E il Sud? Ci pensiamo dopo.'"},
+  FI:  {nome:"Forza Italia",          sigla:"FI",  e:"🔵",col:"#004B9E",txt:"#fff",
+        area:"Centrodestra liberale",
+        desc:"Liberalismo moderato, europeismo, mercato libero, riduzione fiscale.",
+        fun:"Il tuo motto: 'Meno tasse per tutti. Soprattutto per me.'"},
+  NM:  {nome:"Noi Moderati",          sigla:"NM",  e:"⚖️",col:"#6B3FA0",txt:"#fff",
+        area:"Centro-destra",
+        desc:"Cattolicesimo democratico, moderatismo, valori cristiani.",
+        fun:"Il tuo motto: 'Né carne né pesce, ma sempre educati.'"},
+  PD:  {nome:"Partito Democratico",   sigla:"PD",  e:"🌹",col:"#B00018",txt:"#fff",
+        area:"Centrosinistra",
+        desc:"Progressismo, welfare state, europeismo, diritti civili, pluralismo.",
+        fun:"Il tuo motto: 'Cambiamo tutto! (Domani. Forse.)'"},
+  M5S: {nome:"Movimento 5 Stelle",    sigla:"M5S", e:"⭐",col:"#B8960A",txt:"#fff",
+        area:"Populismo / Progressismo",
+        desc:"Democrazia diretta, reddito di cittadinanza, ambiente, pacifismo.",
+        fun:"Il tuo motto: 'Uno vale uno. Ma Grillo valeva di più.'"},
+  AVS: {nome:"Alleanza Verdi e Sinistra",sigla:"AVS",e:"🌿",col:"#C04000",txt:"#fff",
+        area:"Sinistra / Ecologismo",
+        desc:"Ecologismo, decrescita, diritti civili avanzati, redistribuzione.",
+        fun:"Il tuo motto: 'Meno CO₂, più assemblee di condominio.'"},
+  IV:  {nome:"Italia Viva",           sigla:"IV",  e:"💗",col:"#CC006A",txt:"#fff",
+        area:"Centro riformista",
+        desc:"Riformismo liberale, europeismo, merito, agenda Draghi, PNRR.",
+        fun:"Il tuo motto: 'Sono riformista. No aspetta, sono all'opposizione. No aspetta…'"},
+  AZ:  {nome:"Azione",                sigla:"AZ",  e:"⚡",col:"#008BC8",txt:"#fff",
+        area:"Centro liberale",
+        desc:"Liberalismo progressista, competenza, riforme strutturali, europeismo.",
+        fun:"Il tuo motto: 'La competenza conta. (Noi siamo i competenti.)'"},
+  PIU: {nome:"+Europa",               sigla:"+EU", e:"🇪🇺",col:"#002D8C",txt:"#fff",
+        area:"Centro-sinistra europeista",
+        desc:"Europeismo federalista, liberalismo, diritti civili, laicismo.",
+        fun:"Il tuo motto: 'Più Europa. E ancora più Europa. Con extra Europa.'"},
+  FN:  {nome:"Futuro Nazionale",      sigla:"FN",  e:"🐺",col:"#222222",txt:"#eee",
+        area:"Destra radicale",
+        desc:"Nazionalismo identitario, euroscetticismo radicale, anti-immigrazione.",
+        fun:"Il tuo motto: 'L'Europa? Non esiste. Il confine? Eccome.'"},
+  SI:  {nome:"Sinistra Italiana",     sigla:"SI",  e:"✊",col:"#700000",txt:"#fff",
+        area:"Sinistra radicale",
+        desc:"Antifascismo, diritti del lavoro, pace, giustizia sociale.",
+        fun:"Il tuo motto: 'Il capitalismo è il problema. (Non ci sono rimborsi.)'"},
+  RC:  {nome:"Rifondazione Comunista",sigla:"RC",  e:"☭", col:"#AA0000",txt:"#fff",
+        area:"Sinistra comunista",
+        desc:"Marxismo, anticapitalismo, lotta di classe, antimilitarismo.",
+        fun:"Il tuo motto: 'La rivoluzione è in ritardo. Come sempre il treno.'"},
+  SVP: {nome:"SVP - Südtiroler Volkspartei",sigla:"SVP",e:"🏔️",col:"#005500",txt:"#fff",
+        area:"Autonomismo regionale",
+        desc:"Autonomia Alto Adige, minoranze linguistiche, federalismo moderato.",
+        fun:"Il tuo motto: 'Siamo italiani! Ma parliamo tedesco. E votiamo da soli.'"},
+};
+
+const COMMENTI = [
+  ["Niente male! Come un burocrate che taglia le code al bar.",
+   "Classico! Il cuore a sinistra, il portafoglio… anche.",
+   "Rivoluzionario! Karl Marx stava prendendo appunti.",
+   "Efficiente! Un commercialista ti sta già applaudendo."],
+  ["Fermezza! I confini ringraziano.",
+   "Accogliente! Che bel cuore grande hai.",
+   "Pragmatico! Né carne né pesce, come il merluzzo in umido.",
+   "Diplomatico! Kissinger era meno complicato."],
+  ["Sovranista! La bandierina italiana ti sta già salutando.",
+   "Federalista! Berlaymont ti ha già mandato il cv.",
+   "Riformatore! L'UE ti chiama per riscrivere i trattati.",
+   "Status quo! 'Non si tocca niente' — il tuo motto."],
+  ["Verde? No, la bolletta ti preoccupa di più.",
+   "Graduale! Come la cottura della polenta.",
+   "Atomico! L'atomo come tatuaggio ci stai pensando.",
+   "Decresciuto! Meno di tutto, anche della nostalgia."],
+  ["Progressista incallito! Il confetti pride è pronto.",
+   "Cauto! Un piede avanti, uno indietro. Tango della politica.",
+   "Tradizionale! Nonna approvata al 100%.",
+   "Pragmatico! 'Prima il pane, poi i diritti.' — said someone."],
+  ["SSN forever! Stai già scrivendo al medico di base.",
+   "Privatissimo! Il ticket lo paghi col sorriso.",
+   "Mixologist! Anche nei cocktail metti tutto.",
+   "Autonomo! Ogni regione per sé, Dio per tutti."],
+  ["Presidenziale! Il pugno sul tavolo ti piace assai.",
+   "Parlamentarista! Commissioni su commissioni su commissioni.",
+   "Autonomista! Il Nord vuole il suo panettone da solo.",
+   "Tagliacosti! Metà parlamento in meno? Sì grazie."],
+  ["Meritocratico! I voti contano, anche quelli in pagella.",
+   "Voucher! La scuola è un supermercato? Perché no.",
+   "Tecnico! L'idraulico vale quanto il latinista. Vero.",
+   "Pubblico! Viva i bidelli, eroi custodi della cultura."],
+  ["Sceriffo! La voce ferma. La pistola no, ma quasi.",
+   "Educato! Il crimine si combatte con le biblioteche.",
+   "Giurista! Processo breve, sennò tutti scappano.",
+   "Liberale! La canna si legalizza, lo Stato guadagna."],
+  ["NATO! La 5ª flotta è nella tua playlist.",
+   "Europeo! 'Autonomia strategica' suona bene al karaoke.",
+   "Pacifista! La pace si fa col tè, non col cannone.",
+   "Italiano! Prima noi, poi noi, poi ancora noi."],
+  ["Flessibile! Il contratto a termine ti fa dormire benissimo.",
+   "Garantito! Salario minimo? Anche massimo per favore.",
+   "4 giorni! Venerdì libero, il PIL capisce.",
+   "Autonomo! La partita IVA è la tua vera identità."],
+  ["Liberista! Adam Smith ti avrebbe invitato a cena.",
+   "Statalista! IRI docet. O forse no.",
+   "Robin Hood! Prendi ai ricchi, dai ai poveri.",
+   "Bilanciato! Privatizzi ma non tutto, come un frigo vuoto a metà."],
+  ["Giustizialista! La galera non è un albergo.",
+   "Riformatore! PA efficiente è il tuo unicorno.",
+   "Diretto! Referendum su referendum. Democrazia o reality show?",
+   "Sforbiciatore! Taglia enti come bonsai."],
+  ["Identitario! Il tricolore sul profilo tutto l'anno.",
+   "Multiculturale! Il kebab è cultura, punto.",
+   "Localista! Ogni campanile il suo dialetto.",
+   "Pragmatico! La cultura? Bella, ma quanto costa?"],
+];
+
+const DOMANDE = [
+  {t:"💶  Il tuo piano economico preferito?",r:[
+    ["Abbassa le tasse! Il portafoglio ringrazia.",{FdI:2,Lega:3,FI:3,NM:2,PD:0,M5S:0,AVS:0,IV:2,AZ:2,PIU:1,FN:2,SI:0,RC:0,SVP:1}],
+    ["Più welfare! Scuola, ospedali, tutto pubblico.",{FdI:0,Lega:0,FI:0,NM:1,PD:3,M5S:3,AVS:3,IV:1,AZ:1,PIU:2,FN:0,SI:3,RC:3,SVP:1}],
+    ["Tassa i ricchi! Robin Hood mode: ON.",{FdI:0,Lega:0,FI:0,NM:0,PD:2,M5S:3,AVS:3,IV:0,AZ:0,PIU:1,FN:0,SI:3,RC:3,SVP:0}],
+    ["Taglia il debito! Rigore e sacrifici (degli altri).",{FdI:2,Lega:1,FI:2,NM:1,PD:0,M5S:0,AVS:0,IV:3,AZ:3,PIU:2,FN:1,SI:0,RC:0,SVP:1}],
+  ]},
+  {t:"🚢  Sui migranti, cosa faresti?",r:[
+    ["Blocco totale! Niente sbarchi, rimpatri immediati.",{FdI:3,Lega:3,FI:1,NM:1,PD:0,M5S:1,AVS:0,IV:0,AZ:0,PIU:0,FN:3,SI:0,RC:0,SVP:1}],
+    ["Porte aperte! Accoglienza e integrazione vera.",{FdI:0,Lega:0,FI:0,NM:0,PD:3,M5S:1,AVS:3,IV:1,AZ:1,PIU:3,FN:0,SI:3,RC:3,SVP:0}],
+    ["Riduco i flussi ma rispetto i diritti. Equilibrio.",{FdI:1,Lega:1,FI:2,NM:2,PD:1,M5S:2,AVS:1,IV:2,AZ:2,PIU:1,FN:1,SI:1,RC:0,SVP:2}],
+    ["Risolvo le cause! Cooperazione internazionale.",{FdI:0,Lega:0,FI:0,NM:0,PD:2,M5S:2,AVS:3,IV:1,AZ:1,PIU:2,FN:0,SI:3,RC:3,SVP:0}],
+  ]},
+  {t:"🇪🇺  L'Unione Europea: amica o nemica?",r:[
+    ["Nemica! Riprendiamo sovranità, basta diktat di Bruxelles!",{FdI:2,Lega:3,FI:0,NM:1,PD:0,M5S:2,AVS:0,IV:0,AZ:0,PIU:0,FN:3,SI:1,RC:2,SVP:0}],
+    ["Amica! Voglio gli Stati Uniti d'Europa.",{FdI:0,Lega:0,FI:1,NM:1,PD:3,M5S:0,AVS:2,IV:2,AZ:2,PIU:3,FN:0,SI:2,RC:0,SVP:1}],
+    ["Né amica né nemica: va riformata dall'interno.",{FdI:1,Lega:1,FI:1,NM:1,PD:2,M5S:3,AVS:2,IV:1,AZ:1,PIU:1,FN:1,SI:2,RC:2,SVP:1}],
+    ["Va bene così! Difendiamola com'è.",{FdI:0,Lega:0,FI:2,NM:1,PD:1,M5S:0,AVS:0,IV:3,AZ:3,PIU:2,FN:0,SI:0,RC:0,SVP:2}],
+  ]},
+  {t:"🌍  L'ambiente: quanto ti preoccupi?",r:[
+    ["MOLTO! Stop fossili subito, rinnovabili al 100%!",{FdI:0,Lega:0,FI:0,NM:0,PD:2,M5S:2,AVS:3,IV:1,AZ:1,PIU:2,FN:0,SI:2,RC:2,SVP:1}],
+    ["Un po'. Transizione lenta e senza traumi.",{FdI:2,Lega:2,FI:2,NM:2,PD:1,M5S:1,AVS:0,IV:2,AZ:2,PIU:1,FN:1,SI:0,RC:0,SVP:2}],
+    ["Nucleare! Pulito, potente, un po' radioattivo.",{FdI:2,Lega:2,FI:3,NM:2,PD:0,M5S:0,AVS:0,IV:2,AZ:3,PIU:1,FN:1,SI:0,RC:0,SVP:1}],
+    ["Decrescita! Consumare meno, vivere meglio.",{FdI:0,Lega:0,FI:0,NM:0,PD:0,M5S:1,AVS:3,IV:0,AZ:0,PIU:1,FN:0,SI:2,RC:3,SVP:0}],
+  ]},
+  {t:"💒  Matrimonio gay, adozioni, eutanasia?",r:[
+    ["Sì a tutto! I diritti non si mettono ai voti.",{FdI:0,Lega:0,FI:0,NM:0,PD:3,M5S:2,AVS:3,IV:3,AZ:3,PIU:3,FN:0,SI:3,RC:3,SVP:0}],
+    ["Sì ad alcuni, con cautela. Niente salti nel vuoto.",{FdI:0,Lega:1,FI:1,NM:1,PD:1,M5S:2,AVS:1,IV:2,AZ:2,PIU:1,FN:0,SI:1,RC:0,SVP:1}],
+    ["No. La famiglia è mamma+papà, punto.",{FdI:3,Lega:2,FI:1,NM:2,PD:0,M5S:0,AVS:0,IV:0,AZ:0,PIU:0,FN:3,SI:0,RC:0,SVP:2}],
+    ["Ci sono problemi più urgenti! Prima il lavoro.",{FdI:1,Lega:1,FI:1,NM:1,PD:0,M5S:1,AVS:0,IV:0,AZ:0,PIU:0,FN:1,SI:0,RC:0,SVP:1}],
+  ]},
+  {t:"🏥  La sanità come la vuoi?",r:[
+    ["Pubblica e gratuita! Giù le mani dal SSN.",{FdI:1,Lega:1,FI:0,NM:1,PD:3,M5S:3,AVS:3,IV:1,AZ:1,PIU:2,FN:0,SI:3,RC:3,SVP:2}],
+    ["Più privato! Addio liste d'attesa infinite.",{FdI:2,Lega:2,FI:3,NM:2,PD:0,M5S:0,AVS:0,IV:2,AZ:2,PIU:0,FN:2,SI:0,RC:0,SVP:1}],
+    ["Mix pubblico-privato. Il meglio dei due mondi.",{FdI:2,Lega:2,FI:2,NM:2,PD:1,M5S:1,AVS:1,IV:2,AZ:2,PIU:1,FN:1,SI:1,RC:0,SVP:2}],
+    ["Ogni regione decide! Federalismo sanitario.",{FdI:1,Lega:3,FI:1,NM:2,PD:0,M5S:0,AVS:0,IV:0,AZ:1,PIU:0,FN:1,SI:0,RC:0,SVP:3}],
+  ]},
+  {t:"🏛️  Come riforme le istituzioni?",r:[
+    ["Presidenzialismo! Elezione diretta del presidente.",{FdI:3,Lega:2,FI:1,NM:1,PD:0,M5S:0,AVS:0,IV:0,AZ:0,PIU:0,FN:3,SI:0,RC:0,SVP:0}],
+    ["Più Parlamento! Il governo non deve fare il padrone.",{FdI:0,Lega:0,FI:0,NM:0,PD:2,M5S:1,AVS:2,IV:1,AZ:1,PIU:2,FN:0,SI:2,RC:2,SVP:1}],
+    ["Autonomia regionale! Il Nord si governa da solo.",{FdI:1,Lega:3,FI:2,NM:2,PD:0,M5S:0,AVS:0,IV:0,AZ:1,PIU:0,FN:1,SI:0,RC:0,SVP:3}],
+    ["Meno parlamentari! Tagliateli tutti (quasi).",{FdI:1,Lega:1,FI:1,NM:0,PD:0,M5S:3,AVS:1,IV:1,AZ:2,PIU:1,FN:1,SI:1,RC:1,SVP:0}],
+  ]},
+  {t:"📚  La scuola come la vorresti?",r:[
+    ["Più fondi! Stipendi agli insegnanti, scuola pubblica forte.",{FdI:1,Lega:1,FI:0,NM:1,PD:3,M5S:2,AVS:3,IV:1,AZ:1,PIU:2,FN:0,SI:3,RC:3,SVP:1}],
+    ["Voucher! Scelgo io dove mandare i figli.",{FdI:2,Lega:2,FI:3,NM:2,PD:0,M5S:0,AVS:0,IV:1,AZ:2,PIU:0,FN:2,SI:0,RC:0,SVP:1}],
+    ["Tecnici e professionali! Il tornitore vale il latinista.",{FdI:2,Lega:3,FI:2,NM:2,PD:1,M5S:1,AVS:0,IV:1,AZ:2,PIU:0,FN:2,SI:0,RC:0,SVP:2}],
+    ["Merito! Chi studia di più va avanti. Punto.",{FdI:3,Lega:1,FI:2,NM:1,PD:0,M5S:1,AVS:0,IV:2,AZ:3,PIU:1,FN:2,SI:0,RC:0,SVP:1}],
+  ]},
+  {t:"🚔  Criminalità e sicurezza?",r:[
+    ["Pugno di ferro! Tolleranza zero, pene dure.",{FdI:3,Lega:3,FI:2,NM:2,PD:0,M5S:1,AVS:0,IV:0,AZ:1,PIU:0,FN:3,SI:0,RC:0,SVP:1}],
+    ["Prevenzione sociale! Biblioteche non manette.",{FdI:0,Lega:0,FI:0,NM:0,PD:3,M5S:1,AVS:3,IV:1,AZ:1,PIU:2,FN:0,SI:3,RC:3,SVP:1}],
+    ["Giustizia rapida! Processi veloci ed equi.",{FdI:1,Lega:1,FI:3,NM:1,PD:1,M5S:2,AVS:1,IV:3,AZ:3,PIU:2,FN:1,SI:1,RC:0,SVP:1}],
+    ["Legalizzo le droghe leggere! Meno crimini, più tasse.",{FdI:0,Lega:0,FI:0,NM:0,PD:1,M5S:2,AVS:3,IV:1,AZ:2,PIU:2,FN:0,SI:2,RC:3,SVP:0}],
+  ]},
+  {t:"✈️  La politica estera: con chi stai?",r:[
+    ["NATO e USA! Atlantismo duro e puro.",{FdI:3,Lega:1,FI:3,NM:2,PD:2,M5S:0,AVS:0,IV:2,AZ:2,PIU:2,FN:2,SI:0,RC:0,SVP:1}],
+    ["Autonomia europea! Basta dipendere dagli americani.",{FdI:1,Lega:1,FI:0,NM:1,PD:2,M5S:1,AVS:2,IV:2,AZ:2,PIU:3,FN:1,SI:1,RC:1,SVP:2}],
+    ["Pace e dialogo! Meno spese militari, più trattati.",{FdI:0,Lega:0,FI:0,NM:0,PD:0,M5S:3,AVS:3,IV:0,AZ:0,PIU:0,FN:0,SI:3,RC:3,SVP:0}],
+    ["Italia first! I nostri interessi sopra tutto.",{FdI:2,Lega:3,FI:1,NM:1,PD:0,M5S:1,AVS:0,IV:0,AZ:0,PIU:0,FN:3,SI:0,RC:1,SVP:2}],
+  ]},
+  {t:"💼  Il lavoro: che modello preferisci?",r:[
+    ["Flessibile! Meno vincoli, più assunzioni.",{FdI:2,Lega:2,FI:3,NM:2,PD:0,M5S:0,AVS:0,IV:2,AZ:3,PIU:1,FN:2,SI:0,RC:0,SVP:1}],
+    ["Salario minimo! Il lavoro deve pagare, sempre.",{FdI:0,Lega:0,FI:0,NM:0,PD:2,M5S:3,AVS:3,IV:1,AZ:1,PIU:2,FN:0,SI:3,RC:3,SVP:1}],
+    ["4 giorni! Il venerdì è sacro anche in ufficio.",{FdI:0,Lega:0,FI:0,NM:0,PD:1,M5S:2,AVS:3,IV:0,AZ:0,PIU:1,FN:0,SI:3,RC:3,SVP:0}],
+    ["Partita IVA! Autonomia è libertà. E solitudine.",{FdI:2,Lega:2,FI:2,NM:1,PD:0,M5S:0,AVS:0,IV:3,AZ:3,PIU:1,FN:1,SI:0,RC:0,SVP:1}],
+  ]},
+  {t:"🏗️  Quanto deve fare lo Stato nell'economia?",r:[
+    ["Niente! Il mercato si regola da solo.",{FdI:1,Lega:1,FI:3,NM:1,PD:0,M5S:0,AVS:0,IV:2,AZ:3,PIU:2,FN:0,SI:0,RC:0,SVP:0}],
+    ["Molto! Le aziende strategiche devono restare nostre.",{FdI:3,Lega:2,FI:1,NM:1,PD:1,M5S:2,AVS:1,IV:1,AZ:0,PIU:0,FN:3,SI:2,RC:3,SVP:2}],
+    ["Redistribuisce! Robin Hood con le tasse.",{FdI:0,Lega:0,FI:0,NM:0,PD:3,M5S:3,AVS:3,IV:0,AZ:0,PIU:1,FN:0,SI:3,RC:3,SVP:1}],
+    ["Privatizza con giudizio! Ma i servizi restano pubblici.",{FdI:1,Lega:1,FI:2,NM:2,PD:1,M5S:0,AVS:0,IV:2,AZ:2,PIU:2,FN:1,SI:0,RC:0,SVP:2}],
+  ]},
+  {t:"🔍  La corruzione: come la combatti?",r:[
+    ["Galera! I corrotti in prigione senza sconti.",{FdI:2,Lega:2,FI:1,NM:1,PD:1,M5S:3,AVS:2,IV:1,AZ:2,PIU:2,FN:1,SI:2,RC:2,SVP:1}],
+    ["Riformo la PA! Efficiente e trasparente.",{FdI:1,Lega:1,FI:2,NM:1,PD:1,M5S:2,AVS:1,IV:3,AZ:3,PIU:2,FN:1,SI:1,RC:1,SVP:1}],
+    ["Democrazia diretta! I cittadini controllano tutto.",{FdI:0,Lega:0,FI:0,NM:0,PD:1,M5S:3,AVS:2,IV:1,AZ:1,PIU:2,FN:0,SI:2,RC:3,SVP:1}],
+    ["Taglio gli enti! Meno burocrazia, meno corruzioni.",{FdI:2,Lega:2,FI:2,NM:1,PD:0,M5S:2,AVS:1,IV:2,AZ:2,PIU:1,FN:2,SI:0,RC:0,SVP:1}],
+  ]},
+  {t:"🏛️  L'identità italiana: come la vivi?",r:[
+    ["Con orgoglio! Il tricolore sul profilo tutto l'anno.",{FdI:3,Lega:3,FI:2,NM:2,PD:0,M5S:1,AVS:0,IV:0,AZ:0,PIU:0,FN:3,SI:0,RC:0,SVP:2}],
+    ["Con apertura! Ogni cultura arricchisce il paese.",{FdI:0,Lega:0,FI:0,NM:0,PD:3,M5S:1,AVS:3,IV:2,AZ:2,PIU:3,FN:0,SI:3,RC:3,SVP:0}],
+    ["Con localismo! Viva il campanile, viva il dialetto.",{FdI:1,Lega:3,FI:1,NM:2,PD:1,M5S:1,AVS:1,IV:1,AZ:1,PIU:1,FN:1,SI:1,RC:1,SVP:3}],
+    ["Con pragmatismo. Conta quello che funziona.",{FdI:0,Lega:0,FI:1,NM:0,PD:0,M5S:1,AVS:0,IV:2,AZ:2,PIU:0,FN:0,SI:0,RC:0,SVP:0}],
+  ]},
+  {t:"🗳️  Alla fine, come ti definiresti?",r:[
+    ["Di destra! Orgogliosamente.",{FdI:3,Lega:3,FI:3,NM:2,PD:0,M5S:0,AVS:0,IV:0,AZ:0,PIU:0,FN:3,SI:0,RC:0,SVP:1}],
+    ["Di sinistra! Sempre dalla parte giusta.",{FdI:0,Lega:0,FI:0,NM:0,PD:3,M5S:2,AVS:3,IV:1,AZ:1,PIU:2,FN:0,SI:3,RC:3,SVP:0}],
+    ["Centrista! Il divano è mio e non mi muovo.",{FdI:0,Lega:0,FI:1,NM:1,PD:1,M5S:0,AVS:0,IV:3,AZ:3,PIU:2,FN:0,SI:0,RC:0,SVP:1}],
+    ["Antisistema! Tutti a casa, new game.",{FdI:0,Lega:1,FI:0,NM:0,PD:0,M5S:3,AVS:1,IV:0,AZ:0,PIU:0,FN:2,SI:1,RC:2,SVP:0}],
+  ]},
+];
+
+// ══════════════════════════════════════════════════════
+//  STATO
+// ══════════════════════════════════════════════════════
+let state = {
+  name: "", avatar: 0,
+  idx: 0,
+  answers: new Array(DOMANDE.length).fill(-1),
+  scores: {},
+};
+
+function resetScores() {
+  state.scores = {};
+  Object.keys(PARTITI).forEach(k => state.scores[k] = 0);
+}
+
+// ══════════════════════════════════════════════════════
+//  NAVIGAZIONE
+// ══════════════════════════════════════════════════════
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ══════════════════════════════════════════════════════
+//  INIT AVATAR GRID
+// ══════════════════════════════════════════════════════
+(function buildAvatarGrid() {
+  const grid = document.getElementById('avatar-grid');
+  AVATARS.forEach((av, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'av-cell' + (i === 0 ? ' selected' : '');
+    cell.innerHTML = `
+      <div class="av-circle" style="background:${av.bg}">${av.e}</div>
+      <span class="av-name">${av.n}</span>`;
+    cell.addEventListener('click', () => selectAvatar(i));
+    grid.appendChild(cell);
+  });
+})();
+
+function selectAvatar(i) {
+  state.avatar = i;
+  document.querySelectorAll('.av-cell').forEach((c,j) =>
+    c.classList.toggle('selected', j===i));
+}
+
+// ══════════════════════════════════════════════════════
+//  AVVIO QUIZ
+// ══════════════════════════════════════════════════════
+function startQuiz() {
+  state.name = document.getElementById('name-input').value.trim() || 'Anonimo';
+  state.idx = 0;
+  state.answers = new Array(DOMANDE.length).fill(-1);
+  resetScores();
+  renderQuiz();
+  goTo('s-quiz');
+}
+
+// ══════════════════════════════════════════════════════
+//  RENDER DOMANDA
+// ══════════════════════════════════════════════════════
+function renderQuiz() {
+  const dom = DOMANDE[state.idx];
+  const av  = AVATARS[state.avatar];
+  const N   = DOMANDE.length;
+
+  // header
+  document.getElementById('quiz-av').style.background = av.bg;
+  document.getElementById('quiz-av').textContent = av.e;
+  document.getElementById('quiz-uname').textContent = state.name;
+  document.getElementById('quiz-counter').textContent = `${state.idx+1} / ${N}`;
+  document.getElementById('pbar').style.width = `${(state.idx/N)*100}%`;
+
+  // nav buttons
+  document.getElementById('btn-back').style.display = state.idx > 0 ? '' : 'none';
+  const btnNext = document.getElementById('btn-next');
+  btnNext.textContent = state.idx === N-1 ? '✓ RISULTATO!' : 'AVANTI ▶';
+  btnNext.disabled = state.answers[state.idx] === -1;
+
+  // corpo
+  const body = document.getElementById('quiz-body');
+  const letters = ['A','B','C','D'];
+  const curAns = state.answers[state.idx];
+
+  // commento risposta precedente
+  let commentHTML = '';
+  if (state.idx > 0) {
+    const prevAns = state.answers[state.idx - 1];
+    if (prevAns >= 0 && state.idx - 1 < COMMENTI.length) {
+      commentHTML = `<div class="comment-box">💬 ${COMMENTI[state.idx-1][prevAns]}</div>`;
+    }
+  }
+
+  body.innerHTML = `
+    ${commentHTML}
+    <div class="card card-accent">
+      <p class="q-text">${dom.t}</p>
+      ${dom.r.map(([txt], i) => `
+        <div class="opt ${curAns===i?'selected':''}" data-i="${i}" onclick="selectOpt(${i})">
+          <div class="opt-letter">${letters[i]}</div>
+          <div class="opt-text">${txt}</div>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+function selectOpt(val) {
+  state.answers[state.idx] = val;
+  document.querySelectorAll('.opt').forEach((el, i) =>
+    el.classList.toggle('selected', i === val));
+  document.getElementById('btn-next').disabled = false;
+}
+
+function prevQ() {
+  state.idx--;
+  renderQuiz();
+  window.scrollTo(0,0);
+}
+
+function nextQ() {
+  const sel = state.answers[state.idx];
+  if (sel < 0) return;
+  const scores = DOMANDE[state.idx].r[sel][1];
+  Object.entries(scores).forEach(([k,v]) => state.scores[k] += v);
+
+  if (state.idx < DOMANDE.length - 1) {
+    state.idx++;
+    renderQuiz();
+    window.scrollTo(0,0);
+  } else {
+    showResult();
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  RISULTATO
+// ══════════════════════════════════════════════════════
+function showResult() {
+  const sorted = Object.entries(state.scores)
+    .sort(([,a],[,b]) => b - a);
+  const pmax = sorted[0][1] || 1;
+  const [wkey] = sorted[0];
+  const W = PARTITI[wkey];
+  const av = AVATARS[state.avatar];
+
+  // podio HTML
+  const top3 = sorted.slice(0,3);
+  const order = [1,0,2], heights = [80,110,60], medals = ['🥇','🥈','🥉'];
+  const podioHTML = `<div class="podio">
+    ${order.map((rank,slot) => {
+      if (rank >= top3.length) return '<div class="podio-col"></div>';
+      const [pk, ps] = top3[rank];
+      const P = PARTITI[pk];
+      const h = heights[slot];
+      return `<div class="podio-col">
+        <div class="podio-block" style="background:${P.col};height:${h}px;border-color:${rank===0?'#FFD600':'transparent'}">
+          <span>${medals[rank]}</span><span>${P.e}</span>
+        </div>
+        <div class="podio-sigla">${P.sigla}</div>
+        <div class="podio-pct">${Math.round(ps/pmax*100)}%</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+
+  // barre HTML
+  const barsHTML = sorted.map(([k, s]) => {
+    const P = PARTITI[k];
+    const pct = Math.round(s/pmax*100);
+    const isW = k === wkey;
+    return `<div class="bar-row">
+      <div class="bar-name ${isW?'winner-bar':''}">${isW?'★ ':''}${P.nome}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:0%;background:${P.col}" data-pct="${pct}">
+          <span class="bar-emoji">${P.e}</span>
+        </div>
+      </div>
+      <div class="bar-pct ${isW?'winner-pct':''}">${pct}%</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('result-body').innerHTML = `
+    <div class="winner-card">
+      <div class="winner-top" style="background:${W.col}">
+        <div class="winner-av" style="background:${av.bg}">${av.e}</div>
+        <div class="winner-info">
+          <div class="winner-hello">Ciao ${state.name}! Il tuo partito è:</div>
+          <div class="winner-sigla">${W.e} ${W.sigla}</div>
+          <div class="winner-nome">${W.nome}</div>
+          <div class="winner-area">📍 ${W.area}</div>
+        </div>
+      </div>
+      <div class="winner-sep" style="background:${W.col}"></div>
+      <div class="winner-desc" style="background:${W.col};color:${W.txt}">${W.desc}</div>
+      <div class="winner-fun" style="background:${W.col};color:${W.txt}">${W.fun}</div>
+    </div>
+
+    <div class="section-title">🏅 Podio — top 3</div>
+    ${podioHTML}
+
+    <div class="section-title">📊 Classifica completa</div>
+    ${barsHTML}
+
+    <div class="disclaimer">
+      ⚠️ Risultati a scopo di intrattenimento.<br>
+      Non influenzare il tuo voto con un quiz online!
+    </div>
+
+    <div class="result-btns">
+      <button class="btn btn-primary" onclick="restartQuiz()">🔄 RIFAI</button>
+      <button class="btn btn-secondary" onclick="goTo('s-profile')">👤 CAMBIA AVATAR</button>
+      <button class="btn btn-secondary" onclick="shareResult('${W.sigla}')">📤 CONDIVIDI</button>
+    </div>`;
+
+  goTo('s-result');
+
+  // anima le barre con delay
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      document.querySelectorAll('.bar-fill').forEach(el => {
+        el.style.width = el.dataset.pct + '%';
+      });
+    }, 300);
+  });
+
+  // confetti!
+  launchConfetti();
+}
+
+function restartQuiz() {
+  state.idx = 0;
+  state.answers = new Array(DOMANDE.length).fill(-1);
+  resetScores();
+  renderQuiz();
+  goTo('s-quiz');
+}
+
+function shareResult(sigla) {
+  const text = `Ho fatto il Quiz Politico Italiano 2026 e il mio partito più affine è ${sigla}! 🗳️ Fallo anche tu!`;
+  if (navigator.share) {
+    navigator.share({ title: 'Quiz Politico Italiano 2026', text });
+  } else {
+    navigator.clipboard.writeText(text).then(() => alert('Testo copiato! Incollalo dove vuoi 😄'));
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  CONFETTI
+// ══════════════════════════════════════════════════════
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const COLORS = ['#FFD600','#FF4D6D','#00E5FF','#69FF47','#FF8C42','#9B5DE5'];
+  const particles = [];
+
+  for (let i = 0; i < 120; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height * .3 - canvas.height * .1,
+      vx: (Math.random()-0.5) * 6,
+      vy: Math.random() * 4 + 1,
+      color: COLORS[Math.floor(Math.random()*COLORS.length)],
+      w: Math.random()*8+4, h: Math.random()*5+3,
+      rot: Math.random()*360, rotV: (Math.random()-0.5)*6,
+      life: 1,
+    });
+  }
+
+  let frame = 0;
+  function loop() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for (let i = particles.length-1; i >= 0; i--) {
+      const p = particles[i];
+      p.x  += p.vx; p.y += p.vy; p.vy += 0.12;
+      p.rot += p.rotV; p.life -= 0.008;
+      if (p.life <= 0 || p.y > canvas.height + 20) { particles.splice(i,1); continue; }
+      ctx.save();
+      ctx.globalAlpha = p.life;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI/180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    }
+    if (++frame < 200 && particles.length > 0) requestAnimationFrame(loop);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  loop();
+}
+</script>
+</body>
+</html>
