@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌙 Decisore Serata 3000</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070711;--bg2:#0E0E1E;--bg3:#16162A;--pink:#FF2D78;--cyan:#00F0FF;--yellow:#FFE600;--green:#39FF14;--purple:#BF5FFF;--orange:#FF6B00;--text:#FFFFFF;--dim:#6666AA;--border:#1E1E3A;--r:12px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);pointer-events:none;z-index:1000}
+h1,h2,h3{font-family:'Bebas Neue',sans-serif;letter-spacing:.04em}
+.screen{display:none;flex-direction:column;min-height:100vh;animation:fadeIn .3s ease}
+.screen.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--pink);border-radius:2px}
+.stars{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:twinkle var(--d,3s) var(--delay,0s) infinite}
+@keyframes twinkle{0%,100%{opacity:.2}50%{opacity:1}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 22px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;border:none;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.btn-pink{background:var(--pink);color:#fff}.btn-pink:hover{background:#FF5598}.btn-pink:disabled{background:var(--border);color:var(--dim);cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--dim);border:1px solid var(--border)}.btn-ghost:hover{color:var(--text);border-color:var(--dim)}
+.btn-cyan{background:var(--cyan);color:#000;font-weight:700}.btn-cyan:hover{background:#33F4FF}
+.btn-yellow{background:var(--yellow);color:#000;font-weight:700}
+.nav-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(7,7,17,.95);backdrop-filter:blur(12px);border-top:1px solid var(--border);padding:12px 20px;display:flex;gap:10px;z-index:10}
+.tag{font-size:.65rem;padding:3px 8px;border-radius:20px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.tag-pro{background:rgba(57,255,20,.15);color:var(--green);border:1px solid rgba(57,255,20,.3)}
+.tag-con{background:rgba(255,45,120,.12);color:var(--pink);border:1px solid rgba(255,45,120,.25)}
+.tag-neu{background:rgba(255,230,0,.1);color:var(--yellow);border:1px solid rgba(255,230,0,.2)}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:14px}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--pink);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:40px;color:var(--dim)}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--green);color:var(--green);padding:10px 20px;border-radius:50px;font-size:.85rem;font-weight:600;z-index:9999;animation:fadeIn .3s ease;white-space:nowrap}
+
+/* INTRO */
+#s-intro{align-items:center;justify-content:center;text-align:center;padding:30px 20px;background:radial-gradient(ellipse 80% 60% at 50% 0%,#1A0030 0%,var(--bg) 70%)}
+.intro-badge{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--cyan);border:1px solid var(--cyan);padding:4px 14px;border-radius:20px;margin-bottom:20px;display:inline-block;box-shadow:0 0 12px rgba(0,240,255,.3)}
+.mega-title{font-size:clamp(3rem,12vw,6rem);line-height:.95;background:linear-gradient(135deg,var(--pink),var(--yellow),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(255,45,120,.4));margin-bottom:8px}
+.sub-title{font-size:clamp(.9rem,3vw,1.3rem);color:var(--dim);margin-bottom:24px}
+.warning-box{background:rgba(255,45,120,.08);border:1px solid rgba(255,45,120,.3);border-radius:var(--r);padding:14px 20px;font-size:.85rem;color:#FF9AB8;max-width:460px;margin:0 auto 24px;line-height:1.6}
+.intro-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:360px;margin:0 auto}
+.btn-mega{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--pink),#AA0050);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.08em;padding:16px 36px;border-radius:50px;border:none;cursor:pointer;box-shadow:0 0 30px rgba(255,45,120,.5);transition:all .2s;width:100%;justify-content:center;-webkit-tap-highlight-color:transparent}
+.btn-mega:hover{transform:scale(1.03)}
+.btn-gruppo{display:inline-flex;align-items:center;gap:10px;background:var(--bg3);color:var(--cyan);font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.08em;padding:14px 36px;border-radius:50px;border:1px solid var(--cyan);cursor:pointer;width:100%;justify-content:center;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.btn-gruppo:hover{background:rgba(0,240,255,.08)}
+
+/* NOME */
+#s-nome{align-items:center;justify-content:center;padding:40px 20px;text-align:center;background:radial-gradient(ellipse 80% 60% at 50% 0%,#001A30 0%,var(--bg) 70%)}
+.nome-title{font-size:clamp(2rem,8vw,3.5rem);color:var(--cyan);margin-bottom:8px}
+.nome-wrap{border:2px solid var(--cyan);border-radius:var(--r);background:var(--bg2);padding:4px 16px;margin-bottom:20px;width:100%;max-width:400px;box-shadow:0 0 20px rgba(0,240,255,.2)}
+.nome-wrap input{width:100%;padding:14px 0;background:transparent;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:1.2rem;font-weight:600;color:var(--cyan);caret-color:var(--cyan);text-align:center}
+.nome-wrap input::placeholder{color:var(--dim);font-weight:400}
+
+/* QUIZ */
+.quiz-hdr{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 20px;position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:10px}
+.quiz-hdr-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--pink);flex:1}
+.quiz-counter{font-size:.8rem;color:var(--cyan);font-weight:600}
+.pbar-wrap{height:4px;background:var(--border)}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--cyan));transition:width .5s ease}
+.quiz-body{flex:1;padding:20px 20px 100px;max-width:700px;margin:0 auto;width:100%}
+.q-card{background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--pink);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.q-num{font-size:.72rem;color:var(--pink);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.q-text{font-size:clamp(1rem,3.5vw,1.2rem);line-height:1.4}
+.opt{display:flex;align-items:center;background:var(--bg3);border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:10px;cursor:pointer;overflow:hidden;transition:border-color .15s,background .15s;-webkit-tap-highlight-color:transparent;user-select:none}
+.opt:hover{border-color:rgba(255,45,120,.4)}
+.opt.sel{border-color:var(--pink);background:rgba(255,45,120,.08)}
+.opt-letter{width:46px;min-width:46px;background:var(--border);color:var(--dim);font-family:'Bebas Neue',sans-serif;font-size:1.1rem;display:flex;align-items:center;justify-content:center;align-self:stretch;transition:background .15s,color .15s}
+.opt.sel .opt-letter{background:var(--pink);color:#fff}
+.opt-text{padding:14px 16px;font-size:.9rem;line-height:1.5;flex:1}
+.comment-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(0,240,255,.08);border:1px solid rgba(0,240,255,.25);border-radius:20px;padding:8px 16px;font-size:.8rem;color:var(--cyan);font-style:italic;margin-bottom:16px;animation:fadeIn .4s ease}
+
+/* RISULTATO */
+.result-hdr{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 20px;text-align:center}
+.result-body{padding:16px 20px 30px;max-width:700px;margin:0 auto;width:100%}
+.winner-wrap{border-radius:16px;overflow:hidden;margin-bottom:20px;box-shadow:0 0 40px var(--w-glow,rgba(255,45,120,.4));animation:popIn .5s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.winner-banner{padding:24px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}
+.winner-emoji{font-size:4rem;line-height:1}
+.winner-label{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;opacity:.8}
+.winner-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,8vw,3.2rem);line-height:1}
+.winner-tagline{font-size:.9rem;opacity:.85;font-style:italic}
+.winner-body{background:rgba(0,0,0,.35);padding:16px 20px}
+.winner-desc{font-size:.9rem;line-height:1.7;margin-bottom:12px}
+.verdict-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.verdict-item{background:rgba(0,0,0,.3);border-radius:8px;padding:10px 12px;font-size:.8rem;line-height:1.5}
+.v-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;opacity:.7}
+.winner-fun{padding:10px 20px 16px;font-size:.82rem;font-style:italic;opacity:.85}
+.dest-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.dest-grid{grid-template-columns:1fr}}
+.dest-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:transform .2s}
+.dest-card:hover{transform:translateY(-3px)}
+.dest-card.is-winner{border-color:var(--w-color,var(--pink));box-shadow:0 0 20px var(--w-glow,rgba(255,45,120,.3))}
+.dest-card-top{padding:14px 14px 10px;display:flex;align-items:center;gap:10px}
+.dest-icon{font-size:2rem}
+.dest-card-name{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;line-height:1.1}
+.dest-card-vibe{font-size:.72rem;color:var(--dim)}
+.dest-card-body{padding:0 14px 10px;font-size:.78rem;color:#AAAACC;line-height:1.6}
+.tags{display:flex;flex-wrap:wrap;gap:5px;padding:0 14px 12px}
+.score-bar-wrap{padding:0 14px 14px}
+.score-label{font-size:.65rem;color:var(--dim);margin-bottom:4px;display:flex;justify-content:space-between}
+.score-track{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.score-fill{height:100%;border-radius:3px;transition:width 1s ease}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--cyan);margin:24px 0 12px;display:flex;align-items:center;gap:10px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.result-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding-bottom:10px}
+.result-btns .btn{flex:1;min-width:110px}
+
+/* GRUPPO */
+#s-gruppo{background:var(--bg)}
+.gruppo-hdr{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 20px;text-align:center}
+.gruppo-body{padding:16px 20px 30px;max-width:700px;margin:0 auto;width:100%}
+.dest-rank{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:10px}
+.dest-rank.top{border-color:var(--yellow);box-shadow:0 0 16px rgba(255,230,0,.2)}
+.rank-num{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--dim);width:36px;text-align:center;flex-shrink:0}
+.dest-rank.top .rank-num{color:var(--yellow)}
+.rank-emoji{font-size:2rem;flex-shrink:0}
+.rank-info{flex:1}
+.rank-name{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;line-height:1.1}
+.rank-vibe{font-size:.72rem;color:var(--dim)}
+.rank-right{width:110px;flex-shrink:0}
+.rank-count{font-size:.7rem;color:var(--dim);text-align:right;margin-bottom:4px}
+.rank-track{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.rank-fill{height:100%;border-radius:4px;transition:width 1s ease}
+.partecipanti-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.part-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center}
+.part-emoji{font-size:2rem;margin-bottom:6px}
+.part-name{font-weight:600;font-size:.9rem;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.part-dest{font-size:.72rem;color:var(--dim)}
+.part-dest-name{font-size:.78rem;font-weight:600}
+.empty-state{text-align:center;padding:40px 20px;color:var(--dim)}
+
+#conf-canvas{position:fixed;inset:0;pointer-events:none;z-index:999}
+</style>
+</head>
+<body>
+<canvas id="conf-canvas"></canvas>
+<div class="stars" id="stars"></div>
+
+<!-- INTRO -->
+<section id="s-intro" class="screen active">
+  <div style="position:relative;z-index:2;width:100%;display:flex;flex-direction:column;align-items:center;padding:30px 20px">
+    <div class="intro-badge">🌙 Decisore Serata 3000</div>
+    <h1 class="mega-title">COSA<br>FACCIAMO<br>STASERA?</h1>
+    <p class="sub-title">il quiz che nessuno aveva chiesto ma tutti aspettavano</p>
+    <div class="warning-box">⚠️ <strong>Avvertenza:</strong> questo quiz contiene domande stupide, risposte peggiori e consigli di dubbia utilità. La redazione non si assume responsabilità per serate andate male, vecchie appiccicose o incontri con il ragazzo di Ilenia.</div>
+    <div class="intro-btns">
+      <button class="btn-mega" onclick="goTo('s-nome')">🍹 DIMMI DOVE ANDARE</button>
+      <button class="btn-gruppo" onclick="loadGruppo();goTo('s-gruppo')">👥 VEDI RISULTATI DEL GRUPPO</button>
+    </div>
+    <p style="margin-top:16px;font-size:.75rem;color:var(--dim)">7 domande • 7 destinazioni • 0 garanzie</p>
+  </div>
+</section>
+
+<!-- NOME -->
+<section id="s-nome" class="screen">
+  <div style="position:relative;z-index:2;width:100%;display:flex;flex-direction:column;align-items:center;padding:40px 20px;flex:1">
+    <h2 class="nome-title">CHI SEI?</h2>
+    <p style="color:var(--dim);margin-bottom:24px;font-size:.9rem">Il tuo nome comparirà nei risultati del gruppo 👇</p>
+    <div class="nome-wrap"><input id="nome-input" type="text" placeholder="Scrivi il tuo nome…" maxlength="20" autocomplete="off" autocapitalize="words"></div>
+    <button class="btn btn-pink" style="font-size:1rem;padding:14px 40px" onclick="confermaNome()">INIZIA IL QUIZ ▶</button>
+    <button class="btn btn-ghost" style="margin-top:10px" onclick="goTo('s-intro')">◀ Torna</button>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="s-quiz" class="screen">
+  <div class="quiz-hdr">
+    <div class="quiz-hdr-title">🌙 Serata Oracle</div>
+    <div class="quiz-counter" id="q-counter">1 / 7</div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbar" style="width:0%"></div></div>
+  <div class="quiz-body" id="quiz-body"></div>
+  <div class="nav-bar">
+    <button class="btn btn-ghost" id="btn-back" onclick="prevQ()" style="display:none">◀</button>
+    <button class="btn btn-pink" id="btn-next" onclick="nextQ()" disabled>AVANTI ▶</button>
+  </div>
+</section>
+
+<!-- RISULTATO -->
+<section id="s-result" class="screen">
+  <div class="result-hdr"><h2 style="color:var(--yellow)">🔮 IL DESTINO HA PARLATO</h2></div>
+  <div class="result-body" id="result-body"></div>
+</section>
+
+<!-- GRUPPO -->
+<section id="s-gruppo" class="screen">
+  <div class="gruppo-hdr"><h2 style="color:var(--yellow)">👥 RISULTATI DEL GRUPPO</h2></div>
+  <div class="gruppo-body" id="gruppo-body">
+    <div class="loading"><div class="spinner"></div><span>Carico i risultati…</span></div>
+  </div>
+</section>
+
+<script>
+const SUPABASE_URL = 'https://eexhnifqeszfcavstktw.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_ueD_wTOZhzqvFQzfMuaS6A_G4IHrO_5';
+
+async function dbInsert(nome, destinazione) {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/risultati`, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ nome, destinazione })
+    });
+  } catch(e) {}
+}
+
+async function dbFetch() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/risultati?select=*&order=created_at.desc`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    return res.ok ? res.json() : [];
+  } catch(e) { return []; }
+}
+
+// stelle
+(function(){const c=document.getElementById('stars');for(let i=0;i<80;i++){const s=document.createElement('div');s.className='star';s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*4}s`;c.appendChild(s);}})();
+
+const DEST = {
+  chiara:    {nome:'Casa di Chiara',    emoji:'🏠',col:'#9B5DE5',glow:'rgba(155,93,229,.4)',vibe:'Serata cozy • gamer edition',desc:'Divano, gattini esplosivi, Mario Kart e qualcuno che si addormenta alle 23:30. La scelta per chi ama la certezza del buon cibo e tornare a casa sobri.',pro:['Gattini Esplosivi 🐱','Mario Kart 🏎️','Nessun taxi','Snack infiniti'],con:['Probabilità diventare vecchi: 97%','Rischio: addormentarsi sul divano'],neu:["Vibe: 'domani ho cose da fare'"],fun:"Il vostro motto: 'Stiamo benissimo qui.'"},
+  pisa:      {nome:'Giro a Pisa',       emoji:'🍺',col:'#00C2FF',glow:'rgba(0,194,255,.4)',vibe:'Piazza dei Miracoli • sbronza edition',desc:'Vettovaglie in piazza della Pera, risate, forse qualche sconosciuto interessante, forse solo voi stessi. Il rischio di annoiarsi tra di voi è reale, ma la birra è buona.',pro:['Piazza della Pera 🍐','Vibe universitario','Potenziale conoscenze'],con:['Rischio: solo noi tra di noi','Si fa tardissimo','Taxi ritorno = mutuo'],neu:['Distanza: accettabile'],fun:"Il vostro motto: 'Andiamo un attimo e poi torniamo.' (tornate alle 4)"},
+  doncarlos: {nome:'Don Carlos',        emoji:'💃',col:'#FF2D78',glow:'rgba(255,45,120,.5)',vibe:'Vecchie on fire • zona pericolo',desc:"Vecchie pronte a saltarti addosso, gente molto strana nel senso più vasto del termine. Un'esperienza che non si dimentica. Mai.",pro:['Attenzioni garantite 👵','Storie epiche','Mai noioso'],con:['Gente MOLTO strana','Contatto fisico non richiesto','Trauma incluso nel prezzo'],neu:['Vibe: reality show in diretta'],fun:"Il vostro motto: 'Non ci torno più.' (ci tornate la settimana dopo)"},
+  livorno:   {nome:'Livorno',           emoji:'⚓',col:'#FF6B00',glow:'rgba(255,107,0,.4)',vibe:'Porto livornese • zona minefield',desc:'Come Pisa ma con più carattere livornese e un rischio aggiuntivo: potreste incontrare il ragazzo di Ilenia. Calcolate bene le probabilità prima di partire.',pro:['Atmosfera portuale 🌊','Posti fighi','Livornesi simpatici'],con:['⚠️ ALTO RISCHIO: ragazzo di Ilenia','Lontano quanto basta per fare male','Stesso rischio Pisa'],neu:['Portare Ilenia = scudo umano'],fun:"Il vostro motto: 'Ma Ilenia viene?' (risposta: no)"},
+  penelope:  {nome:'Penelope',          emoji:'🪩',col:'#FFE600',glow:'rgba(255,230,0,.4)',vibe:'Sexy disco • esperienze divergenti',desc:"Molto bella se sei maschio. Meno bella se sei femmina. La pista è buona, i drink anche. Il resto dipende dal tuo punto di vista.",pro:['Pista da ballo 🎵','Drink ottimi','Bella esteticamente'],con:['Esperienza asimmetrica (M vs F)','Prezzi da discoteca'],neu:['Verdetto: dipende da chi sei'],fun:"Il vostro motto: 'Almeno la musica è bella.'"},
+  bientina:  {nome:'Barrino a Bientina',emoji:'🍻',col:'#39FF14',glow:'rgba(57,255,20,.3)',vibe:'Comfort zone • scelta del cuore',desc:'Merda totale. Detto questo: è vicino, si conosce gente, non ti perdi, non spendi un rene in taxi. A volte la scelta peggiore sulla carta è quella migliore nella pratica.',pro:['Vicino 🏃','Gente che conosci','Nessun taxi','Zero sbattimenti'],con:['Merda totale (fonte: chiunque)','Le stesse facce di sempre'],neu:['Ma almeno non ci si perde'],fun:"Il vostro motto: 'Tanto che c'è da fare?' (niente)"},
+  firenze:   {nome:'Firenze',           emoji:'🌆',col:'#BF5FFF',glow:'rgba(191,95,255,.4)',vibe:'Big city energy • peruviane guaranteed',desc:'Lontana quanto basta per fare schifo il ritorno, ma abbastanza grande da offrire di tutto. Sai già se questo posto fa per te.',pro:['Grande varietà 🌍','Sempre qualcosa di nuovo','Peruviane (se cercate)'],con:['Distanza = dolore','Taxi ritorno = appartamento','Si torna alle 4 di notte'],neu:['Per chi ha la macchina e non beve'],fun:"Il vostro motto: 'Vale la pena.' (non sempre)"},
+};
+
+const Q = [
+  {t:'🌡️ Quanto casino vuoi fare stasera?',r:[['Zero. Divano, coperta, morte.',{chiara:5,bientina:2,pisa:0,doncarlos:0,livorno:0,penelope:0,firenze:0}],['Un po\'. Ridere, bere qualcosa, niente di estremo.',{chiara:2,bientina:3,pisa:3,doncarlos:0,livorno:2,penelope:2,firenze:1}],['Tanto. Voglio tornare con almeno un rimpianto.',{chiara:0,bientina:0,pisa:3,doncarlos:4,livorno:3,penelope:3,firenze:4}],['MASSIMO. Voglio una storia da raccontare al funerale.',{chiara:0,bientina:0,pisa:2,doncarlos:5,livorno:2,penelope:2,firenze:4}]]},
+  {t:'📏 Quanto sei disposto a viaggiare?',r:[['Neanche un passo. Sono già in pigiama.',{chiara:5,bientina:4,pisa:0,doncarlos:0,livorno:0,penelope:0,firenze:0}],['20 minuti max. Sono umano, non un corriere.',{chiara:3,bientina:5,pisa:2,doncarlos:2,livorno:0,penelope:2,firenze:0}],["Un'oretta va bene se vale la pena.",{chiara:0,bientina:0,pisa:5,doncarlos:3,livorno:4,penelope:4,firenze:2}],['Distanza? Non conosco questo concetto.',{chiara:0,bientina:0,pisa:3,doncarlos:3,livorno:3,penelope:3,firenze:5}]]},
+  {t:"👵 Come ti senti rispetto al contatto fisico non richiesto da sconosciuti?",r:[['NO. Zona di esclusione totale.',{chiara:4,bientina:3,pisa:2,doncarlos:0,livorno:2,penelope:1,firenze:2}],["Dipende dall'età e dall'odore.",{chiara:2,bientina:2,pisa:3,doncarlos:1,livorno:2,penelope:3,firenze:3}],['Mah, si vedrà sul momento.',{chiara:0,bientina:1,pisa:3,doncarlos:3,livorno:3,penelope:3,firenze:3}],['BRING IT ON. Sono qui per questo.',{chiara:0,bientina:0,pisa:2,doncarlos:5,livorno:2,penelope:3,firenze:4}]]},
+  {t:'💸 Budget della serata?',r:[['Zero spiccioli. Sono tecnicamente in bancarotta.',{chiara:5,bientina:4,pisa:1,doncarlos:0,livorno:0,penelope:0,firenze:0}],['20€ e poi piango.',{chiara:2,bientina:4,pisa:3,doncarlos:2,livorno:2,penelope:1,firenze:0}],['50€ e si vede come va.',{chiara:0,bientina:1,pisa:4,doncarlos:3,livorno:4,penelope:4,firenze:3}],["Non ho un tetto, sono libero come un uccello.",{chiara:0,bientina:0,pisa:3,doncarlos:4,livorno:3,penelope:4,firenze:5}]]},
+  {t:'🎯 Qual è il tuo obiettivo segreto per stasera?',r:[['Sopravvivere e tornare a letto entro mezzanotte.',{chiara:5,bientina:3,pisa:1,doncarlos:0,livorno:0,penelope:0,firenze:0}],['Ridere. Semplicemente ridere.',{chiara:4,bientina:3,pisa:4,doncarlos:2,livorno:3,penelope:2,firenze:2}],['Conoscere gente nuova e interessante.',{chiara:0,bientina:1,pisa:3,doncarlos:2,livorno:2,penelope:3,firenze:5}],['Avventura. Non voglio sapere come finisce.',{chiara:0,bientina:0,pisa:2,doncarlos:5,livorno:3,penelope:3,firenze:4}]]},
+  {t:'🚨 Quanto rischio sei disposto ad accettare?',r:[['Zero. Voglio prevedibilità totale.',{chiara:5,bientina:4,pisa:2,doncarlos:0,livorno:1,penelope:1,firenze:0}],['Qualche sorpresa sì, trauma no.',{chiara:2,bientina:3,pisa:4,doncarlos:1,livorno:3,penelope:3,firenze:3}],['Rischio medio. Tipo skateboard senza casco.',{chiara:0,bientina:1,pisa:3,doncarlos:3,livorno:3,penelope:4,firenze:4}],['Lanciatemi nel caos. Sono il caos.',{chiara:0,bientina:0,pisa:2,doncarlos:5,livorno:3,penelope:3,firenze:4}]]},
+  {t:'🪞 Con che energia sei uscito di casa?',r:[['Zombie. Sono uscito per sbaglio.',{chiara:5,bientina:4,pisa:1,doncarlos:0,livorno:0,penelope:0,firenze:0}],['Normale. Né vivo né morto.',{chiara:3,bientina:3,pisa:3,doncarlos:1,livorno:3,penelope:2,firenze:2}],['Carico. Ho persino messo il profumo.',{chiara:1,bientina:1,pisa:4,doncarlos:3,livorno:4,penelope:4,firenze:4}],['DEVASTANTE. Gli occhiali da sole di notte.',{chiara:0,bientina:0,pisa:2,doncarlos:5,livorno:3,penelope:4,firenze:5}]]},
+];
+
+const COMMENTI=[['Scelta saggia. Il divano non ti delude mai.','Equilibrio perfetto. Aristotele approva.','Rispetto. Sei consapevole dei tuoi limiti.','Qualcuno chiami una ambulanza. O un taxi.'],['Il pigiama è già indossato, si vede.','20 minuti sono 20 minuti.','Spirito avventuriero con freni.','Benvenuto nel club della sofferenza logistica.'],['Confine sano. Mantienilo.','Pragmatico. Mi piace.','Filosofia del si vedra. Classico.','Energie di Don Carlos rilevate. Allerta rossa.'],['Rispettabile. La miseria è democratica.','20 euro valgono tanto se spesi bene.','Budget responsabile. Tua madre sarebbe fiera.','Sei libero e irresponsabile. Bello.'],['Obiettivo onesto e raggiungibile.','Il riso è la migliore medicina. Vai.','Ambizioso. Dipende dal posto...','Energy da leggenda urbana. Ci vuole coraggio.'],['Scelta saggia. Il caos fa male.','Bilanciato. Come un funambolo con le ciabatte.','Senza casco ma con stile.','Sei tu il rischio. Gli altri si preoccupino.'],['Non è uscito, è evaso.','Standard. Come il 90% della popolazione stasera.','Il profumo! Un segno di speranza!','SEGNALATO. Tenere docchio questa persona.']];
+
+const EMOJIS = ['😎','🤩','🥳','😂','🤔','😴','🔥','💀','👽','🤡','🫠','🍕','🦊','🐸','🌝','🎲'];
+
+let state = { nome:'', idx:0, answers:new Array(Q.length).fill(-1), scores:{} };
+function resetScores(){ state.scores={}; Object.keys(DEST).forEach(k=>state.scores[k]=0); }
+
+function goTo(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+function showToast(msg){ const t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3000); }
+
+// NOME
+function confermaNome(){
+  const v=document.getElementById('nome-input').value.trim();
+  if(!v){document.getElementById('nome-input').focus();return;}
+  state.nome=v; state.idx=0; state.answers=new Array(Q.length).fill(-1); resetScores();
+  renderQ(); goTo('s-quiz');
+}
+document.getElementById('nome-input').addEventListener('keydown',e=>{if(e.key==='Enter')confermaNome();});
+
+// QUIZ
+function renderQ(){
+  const q=Q[state.idx]; const N=Q.length;
+  document.getElementById('q-counter').textContent=`${state.idx+1} / ${N}`;
+  document.getElementById('pbar').style.width=`${(state.idx/N)*100}%`;
+  document.getElementById('btn-back').style.display=state.idx>0?'':'none';
+  const bn=document.getElementById('btn-next');
+  bn.textContent=state.idx===N-1?'✓ SCOPRI IL DESTINO':'AVANTI ▶';
+  bn.disabled=state.answers[state.idx]===-1;
+  const letters=['A','B','C','D'];
+  const cur=state.answers[state.idx];
+  let comm='';
+  if(state.idx>0){const p=state.answers[state.idx-1];if(p>=0)comm=`<div class="comment-pill">💬 ${COMMENTI[state.idx-1][p]}</div>`;}
+  document.getElementById('quiz-body').innerHTML=`${comm}<div class="q-card"><div class="q-num">DOMANDA ${state.idx+1}</div><div class="q-text">${q.t}</div></div>${q.r.map(([txt],i)=>`<div class="opt ${cur===i?'sel':''}" onclick="selectOpt(${i})"><div class="opt-letter">${letters[i]}</div><div class="opt-text">${txt}</div></div>`).join('')}`;
+}
+
+function selectOpt(val){ state.answers[state.idx]=val; document.querySelectorAll('.opt').forEach((el,i)=>el.classList.toggle('sel',i===val)); document.getElementById('btn-next').disabled=false; }
+function prevQ(){ state.idx--; renderQ(); window.scrollTo(0,0); }
+function nextQ(){
+  const sel=state.answers[state.idx]; if(sel<0)return;
+  const sc=Q[state.idx].r[sel][1]; Object.entries(sc).forEach(([k,v])=>state.scores[k]=(state.scores[k]||0)+v);
+  if(state.idx<Q.length-1){state.idx++;renderQ();window.scrollTo(0,0);}else showResult();
+}
+
+// RISULTATO
+async function showResult(){
+  const sorted=Object.entries(state.scores).sort(([,a],[,b])=>b-a);
+  const pmax=sorted[0][1]||1; const [wkey]=sorted[0]; const W=DEST[wkey];
+  dbInsert(state.nome,wkey);
+  const winnerHTML=`<div class="winner-wrap" style="--w-glow:${W.glow}"><div class="winner-banner" style="background:linear-gradient(135deg,${W.col}CC,${W.col}55)"><div class="winner-emoji">${W.emoji}</div><div class="winner-label">Ciao ${state.nome}! Il destino ha deciso:</div><div class="winner-name">${W.nome}</div><div class="winner-tagline">${W.vibe}</div></div><div class="winner-body"><div class="winner-desc">${W.desc}</div><div class="verdict-grid"><div class="verdict-item"><div class="v-label" style="color:var(--green)">✅ PRO</div>${W.pro.map(p=>`<div>• ${p}</div>`).join('')}</div><div class="verdict-item"><div class="v-label" style="color:var(--pink)">❌ CONTRO</div>${W.con.map(c=>`<div>• ${c}</div>`).join('')}${W.neu.map(n=>`<div style="color:var(--yellow)">• ${n}</div>`).join('')}</div></div></div><div class="winner-fun" style="background:${W.col}22;color:${W.col}">${W.fun}</div></div>`;
+  const allHTML=sorted.map(([k])=>{const D=DEST[k];const s=state.scores[k]||0;const pct=Math.round(s/pmax*100);const isW=k===wkey;return`<div class="dest-card ${isW?'is-winner':''}" style="--w-color:${D.col};--w-glow:${D.glow}"><div class="dest-card-top"><div class="dest-icon">${D.emoji}</div><div><div class="dest-card-name" style="color:${D.col}">${isW?'★ ':''}${D.nome}</div><div class="dest-card-vibe">${D.vibe}</div></div></div><div class="dest-card-body">${D.desc.substring(0,80)}…</div><div class="tags">${D.pro.slice(0,2).map(p=>`<span class="tag tag-pro">${p}</span>`).join('')}${D.con.slice(0,1).map(c=>`<span class="tag tag-con">${c.substring(0,22)}</span>`).join('')}</div><div class="score-bar-wrap"><div class="score-label"><span>Compatibilità</span><span style="color:${D.col}">${pct}%</span></div><div class="score-track"><div class="score-fill" style="width:0%;background:${D.col}" data-pct="${pct}"></div></div></div></div>`;}).join('');
+  document.getElementById('result-body').innerHTML=`${winnerHTML}<div class="section-title">🗺️ Tutte le opzioni</div><div class="dest-grid">${allHTML}</div><div class="result-btns"><button class="btn btn-cyan" onclick="loadGruppo();goTo('s-gruppo')">👥 VEDI GRUPPO</button><button class="btn btn-yellow" onclick="shareIt('${W.nome}')">📤 CONDIVIDI</button><button class="btn btn-ghost" onclick="restart()">🔄 RIPROVA</button></div>`;
+  goTo('s-result');
+  requestAnimationFrame(()=>setTimeout(()=>{ document.querySelectorAll('.score-fill').forEach(el=>el.style.width=el.dataset.pct+'%'); },400));
+  launchConfetti(W.col);
+}
+
+function restart(){ state.idx=0; state.answers=new Array(Q.length).fill(-1); resetScores(); goTo('s-nome'); }
+function shareIt(nome){ const txt=`Ho usato il Decisore Serata 3000 e finisco a: ${nome} 🌙 E tu?`; if(navigator.share)navigator.share({title:'Decisore Serata',text:txt}); else navigator.clipboard.writeText(txt).then(()=>showToast('✅ Copiato! Incollalo su WhatsApp')); }
+
+// GRUPPO
+async function loadGruppo(){
+  document.getElementById('gruppo-body').innerHTML=`<div class="loading"><div class="spinner"></div><span>Carico i risultati…</span></div>`;
+  const rows=await dbFetch();
+  if(rows.length===0){
+    document.getElementById('gruppo-body').innerHTML=`<div class="empty-state"><div style="font-size:3rem;margin-bottom:12px">🌙</div><p style="font-size:1.1rem;margin-bottom:8px">Ancora nessun risultato!</p><p style="font-size:.85rem;margin-bottom:20px">Sii il primo a fare il quiz e condividi il link col gruppo.</p><button class="btn btn-pink" onclick="goTo('s-nome')">▶ FAI IL QUIZ</button></div>`;
+    return;
+  }
+  const counts={}; Object.keys(DEST).forEach(k=>counts[k]=0);
+  rows.forEach(r=>{if(counts[r.destinazione]!==undefined)counts[r.destinazione]++;});
+  const sorted=Object.entries(counts).sort(([,a],[,b])=>b-a);
+  const total=rows.length; const maxV=sorted[0][1]||1;
+  const medals=['🥇','🥈','🥉'];
+  const rankHTML=sorted.filter(([,n])=>n>0).map(([k,n],i)=>{const D=DEST[k];const pct=Math.round(n/total*100);const bpct=Math.round(n/maxV*100);return`<div class="dest-rank ${i===0?'top':''}"><div class="rank-num">${medals[i]||i+1}</div><div class="rank-emoji">${D.emoji}</div><div class="rank-info"><div class="rank-name" style="color:${D.col}">${D.nome}</div><div class="rank-vibe">${D.vibe}</div></div><div class="rank-right"><div class="rank-count">${n} vot${n===1?'o':'i'} • ${pct}%</div><div class="rank-track"><div class="rank-fill" style="width:0%;background:${D.col}" data-pct="${bpct}"></div></div></div></div>`;}).join('');
+  const recent=rows.slice(0,20);
+  const partHTML=recent.map((r,i)=>{const D=DEST[r.destinazione]||{nome:r.destinazione,emoji:'❓',col:'var(--dim)'};return`<div class="part-card"><div class="part-emoji">${EMOJIS[i%EMOJIS.length]}</div><div class="part-name">${r.nome}</div><div class="part-dest">${D.emoji} <span class="part-dest-name" style="color:${D.col}">${D.nome}</span></div></div>`;}).join('');
+  const [topKey]=sorted[0]; const TopD=DEST[topKey];
+  document.getElementById('gruppo-body').innerHTML=`<div class="card" style="border-color:${TopD.col};box-shadow:0 0 20px ${TopD.glow};text-align:center;margin-bottom:20px"><div style="font-size:2.5rem">${TopD.emoji}</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:${TopD.col};margin:4px 0">${TopD.nome}</div><div style="color:var(--dim);font-size:.85rem">🏆 Destinazione più votata dal gruppo</div><div style="margin-top:6px;font-size:.82rem;color:#AAAACC">${total} person${total===1?'a':'e'} hanno risposto</div></div><div class="section-title">📊 Classifica</div>${rankHTML}<div class="section-title">👥 Chi ha risposto</div><div class="partecipanti-grid">${partHTML}</div><div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap"><button class="btn btn-pink" style="flex:1" onclick="loadGruppo()">🔄 Aggiorna</button><button class="btn btn-ghost" style="flex:1" onclick="goTo('s-intro')">🏠 Home</button></div>`;
+  requestAnimationFrame(()=>setTimeout(()=>{document.querySelectorAll('.rank-fill').forEach(el=>el.style.width=el.dataset.pct+'%');},300));
+}
+
+// CONFETTI
+function launchConfetti(c){
+  const cv=document.getElementById('conf-canvas'); cv.width=window.innerWidth; cv.height=window.innerHeight;
+  const ctx=cv.getContext('2d'); const cols=[c,'#FF2D78','#00F0FF','#FFE600','#39FF14','#BF5FFF'];
+  const ps=Array.from({length:100},()=>({x:Math.random()*cv.width,y:-10,vx:(Math.random()-.5)*5,vy:Math.random()*3+2,color:cols[Math.floor(Math.random()*cols.length)],w:Math.random()*10+4,h:Math.random()*6+3,rot:Math.random()*360,rotV:(Math.random()-.5)*8,life:1}));
+  let f=0;
+  function loop(){ctx.clearRect(0,0,cv.width,cv.height);for(let i=ps.length-1;i>=0;i--){const p=ps[i];p.x+=p.vx;p.y+=p.vy;p.vy+=.1;p.rot+=p.rotV;p.life-=.006;if(p.life<=0||p.y>cv.height+20){ps.splice(i,1);continue;}ctx.save();ctx.globalAlpha=p.life;ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillStyle=p.color;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();}if(++f<250&&ps.length>0)requestAnimationFrame(loop);else ctx.clearRect(0,0,cv.width,cv.height);}
+  loop();
+}
+
+resetScores();
+</script>
+</body>
+</html>
